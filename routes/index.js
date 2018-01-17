@@ -7,16 +7,22 @@ const googleMapsClient = require('@google/maps').createClient({
 const ZomatoApiHandler = require('../ZomatoApiHandler');
 let zom = new ZomatoApiHandler();
 
-router.get('/', function(req, res, next) {
-  // res.render('index', { title: 'Express' });
+router.post('/', function(req, res, next) {
+    var uLat = req.body["ulat"];
+    var uLong = req.body["ulong"];
+    console.log(uLat + "LOCATION ");
+    console.log(uLong + "LOCATION ");
+    // res.render('index', { title: 'Express' });
     let zomPromise = zom.nearbyRest()
         .then(function(restaurants) {
             "use strict";
             let arr = [],
-            location = [40.742051, -74.004821];
+                location = [28.605015,77.035237];
+
             restaurants.forEach(function (res) {
                 res = res.restaurant;
                 arr.push([res.location.latitude, res.location.longitude]);
+                console.log("WOVILA")
             });
             googleMapsClient.directions({
                 origin: location,
@@ -24,11 +30,12 @@ router.get('/', function(req, res, next) {
                 waypoints: arr
             }).asPromise().then(function (result) {
                 res.json(result.json);
-            }).catch(next);
+                console.log(result.json)
+            });
         });
 });
 
-router.post('/', function (req, res, next) {
+router.post('/a', function (req, res, next) {
 
     // res.render('index', { title: 'Express' });
     // console.log(req.body);
