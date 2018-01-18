@@ -6,12 +6,13 @@ const googleMapsClient = require('@google/maps').createClient({
 });
 const ZomatoApiHandler = require('../ZomatoApiHandler');
 let zom = new ZomatoApiHandler();
-
+const LIMIT_RES = 3;
 router.post('/', function(req, res, next) {
     var uLat = req.param("ulat");
     var uLong = req.param("ulong");
     console.log(uLat + "LOCATION ");
     console.log(uLong + "LOCATION ");
+    let resData = [];
     // res.render('index', { title: 'Express' });
     let zomPromise = zom.nearbyRest({ulong: uLong, ulat: uLat})
         .then(function(restaurants) {
@@ -21,6 +22,8 @@ router.post('/', function(req, res, next) {
 
             restaurants.forEach(function (res) {
                 res = res.restaurant;
+                if(resData.length >= LIMIT_RES) return;
+                resData.push(res);
                 arr.push([res.location.latitude, res.location.longitude]);
             });
             googleMapsClient.directions({
@@ -28,6 +31,8 @@ router.post('/', function(req, res, next) {
                 destination: [uLat, uLong],
                 waypoints: arr
             }).asPromise().then(function (result) {
+                result.json = result.json || {};
+                result.json.resData = resData;
                 res.json(result.json);
                 console.log(result.json)
             });
