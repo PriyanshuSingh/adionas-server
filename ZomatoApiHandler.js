@@ -14,12 +14,11 @@ class ZomatoApiHandler extends ApiHandler {
         super();
     }
     nearbyRest(location) {
-        let proxy = function () {};
         location = location || {};
-        location.lon = location.lon || -74.004821;
-        location.lat = location.lat || 40.742051;
+        location.ulong= location.ulong || -74.004821;
+        location.ulat = location.ulat || 40.742051;
         return requestPromise({
-            uri: Const.ZOMATO.BASE_URL + Const.ZOMATO.APIS.GEOCODE + "?&lat=" + location.lat + "&lon=" + location.lon,
+            uri: Const.ZOMATO.BASE_URL + Const.ZOMATO.APIS.GEOCODE + "?&lat=" + location.ulat + "&lon=" + location.ulong,
             headers: {
                 "user-key" : Const.ZOMATO.KEY
             },
